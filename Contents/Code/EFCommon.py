@@ -31,7 +31,7 @@ def BrowseVideos(title='Browse Videos'):
 		browseVideosMenuItems[sortTitle] = {'function':ListVideos, 'functionArgs':{'url':sortURL}}
 	
 	# Generate the menu with the sort orders
-	oc = GenerateMenu(title, browseVideosMenuItems)
+	oc = GenerateMenu(title, browseVideosMenuItems, no_cache=True)
 	
 	# Add an option for a random video
 	oc.add(RandomVideo())
@@ -70,7 +70,7 @@ def ListVideos(title='List Videos', url=BASE_URL, page=1, pageLimit = MAX_VIDEOS
 			thumbnail =	video.xpath("./div[contains(@class, 'thumb')]/a/img/@src")[0]
 			category =		video.xpath("./div[contains(@class, 'details')]/p[contains(@class, 'info')]/b/a[preceding-sibling::i[contains(@class, 'fa-file-o')]]/text()")[0]
 			
-			if (category != "Gallery"):
+			if (category != "Gallery" and category != "Plugs"):
 				# Create a Video Clip Object for the video
 				oc.add(VideoClipObject(
 					url =		videoURL,
@@ -113,9 +113,9 @@ def RandomVideo():
 		title =	'Random'
 	)
 
-def GenerateMenu(title, menuItems):
+def GenerateMenu(title, menuItems, no_cache=False):
 	# Create the object to contain the menu items
-	oc = ObjectContainer(title2=title)
+	oc = ObjectContainer(title2=title, no_cache=no_cache)
 	
 	# Loop through the menuItems dictionary
 	for menuTitle, menuData in menuItems.items():

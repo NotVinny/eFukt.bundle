@@ -14,6 +14,7 @@ def Start():
 	
 	# Set the defaults of Directory Objects
 	DirectoryObject.thumb =	R(ICON)
+	VideoClipObject.thumb =	R(ICON)
 	
 	# Set the cache lifespan
 	HTTP.CacheTime = CACHE_1HOUR * 2
