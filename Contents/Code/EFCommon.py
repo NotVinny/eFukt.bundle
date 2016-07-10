@@ -16,7 +16,7 @@ SORT_ORDERS = OrderedDict([
 	('Favorites',				BASE_URL + '/favorites/')
 ])
 
-MAX_VIDEOS_PER_PAGE =			12
+MAX_VIDEOS_PER_PAGE =			20
 
 @route(ROUTE_PREFIX + '/videos/browse')
 def BrowseVideos(title='Browse Videos'):
@@ -51,13 +51,13 @@ def ListVideos(title='List Videos', url=BASE_URL, page=1, pageLimit = MAX_VIDEOS
 	html = HTML.ElementFromURL(pagedURL)
 	
 	# Use xPath to extract a list of divs that contain videos
-	videos = html.xpath("//body/div/div/div/div/div[contains(@class, 'post')]")
+	videos = html.xpath("//body/div/div/div/div/div[contains(@class, 'tile')]")
 	
 	# Loop through the videos in the page
 	for video in videos:
 		
 		# Get the link of the video
-		videoURL = video.xpath("./div[contains(@class, 'details')]/p[contains(@class,'title')]/a/@href")[0]
+		videoURL = video.xpath("./div[contains(@class, 'meta')]/h3[contains(@class,'title')]/a/@href")[0]
 		
 		# Check for relative URLs
 		if (videoURL.startswith('/')):
@@ -66,9 +66,9 @@ def ListVideos(title='List Videos', url=BASE_URL, page=1, pageLimit = MAX_VIDEOS
 		# Make sure the last step went smoothly (this is probably redundant but oh well)
 		if (videoURL.startswith(BASE_URL)):
 			# Use xPath to extract video details
-			videoTitle =	video.xpath("./div[contains(@class, 'details')]/p[contains(@class,'title')]/a/text()")[0]
-			thumbnail =	video.xpath("./div[contains(@class, 'thumb')]/a/img/@src")[0]
-			category =		video.xpath("./div[contains(@class, 'details')]/p[contains(@class, 'info')]/b/a[preceding-sibling::i[contains(@class, 'fa-file-o')]]/text()")[0]
+			videoTitle =	video.xpath("./div[contains(@class, 'meta')]/h3[contains(@class,'title')]/a/text()")[0]
+			thumbnail =	video.xpath("./a[contains(@class, 'thumb')]/img/@src")[0]
+			category =		video.xpath("./div[contains(@class, 'meta')]/div[contains(@class, 'details')]/span[4]/a/text()")[0]
 			
 			if (category != "Gallery" and category != "Plugs"):
 				# Create a Video Clip Object for the video

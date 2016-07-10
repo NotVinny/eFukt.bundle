@@ -1,5 +1,3 @@
-RE_VIDEO_URL = Regex("file: \"([^\"]+)\",")
-
 def NormalizeURL(url):
 
 	return url
@@ -8,8 +6,8 @@ def MetadataObjectForURL(url):
 
 	html =		HTML.ElementFromURL(url)
 
-	title =		html.xpath('//meta[@property="og:title"]/@content')[0].strip()
-	thumbnail =	html.xpath('//meta[@property="og:image"]/@content')[0].strip()
+	title =		html.xpath("//h1[contains(@class, 'title')]/text()")[0].strip()
+	thumbnail =	html.xpath("//video/@poster")[0].strip()
 
 	return VideoClipObject(
 		title =		title,
@@ -20,36 +18,34 @@ def MetadataObjectForURL(url):
 @deferred
 def MediaObjectsForURL(url):
 
-	data = HTTP.Request(url).content
-	video = RE_VIDEO_URL.search(data)
-
-	if video:
-		
-		videoURL = video.group(1)
-		
-		if (videoURL[-3:] == 'flv'):
-			videoContainer =	'flv'
-			videoCodec =	VideoCodec.VP6
-			audioCodec =	AudioCodec.MP3
-		else:
-			videoContainer =	Container.MP4
-			videoCodec =	VideoCodec.H264
-			audioCodec =	AudioCodec.AAC
-		
-		return [
-			MediaObject(
-				container =			videoContainer,
-				video_codec =			videoCodec,
-				video_resolution =		'480',
-				audio_codec =			audioCodec,
-				audio_channels =			2,
-				optimized_for_streaming =	True if Client.Product not in ['Plex Web'] else False,
-				parts = [
-					PartObject(
-						key =	videoURL
-					)
-				]
-			)
-		]
+	html =		HTML.ElementFromURL(url)
+	videoURL =		html.xpath('//video/source/@src')[0].strip()
+	
+	Log("VIDEO URL IS: " + videoURL)
+	
+	if (videoURL[-3:] == 'flv'):
+		videoContainer =	'flv'
+		videoCodec =	VideoCodec.VP6
+		audioCodec =	AudioCodec.MP3
+	else:
+		videoContainer =	Container.MP4
+		videoCodec =	VideoCodec.H264
+		audioCodec =	AudioCodec.AAC
+	
+	return [
+		MediaObject(
+			container =			videoContainer,
+			video_codec =			videoCodec,
+			video_resolution =		'480',
+			audio_codec =			audioCodec,
+			audio_channels =			2,
+			optimized_for_streaming =	True if Client.Product not in ['Plex Web'] else False,
+			parts = [
+				PartObject(
+					key =	videoURL
+				)
+			]
+		)
+	]
 	
 	raise Ex.MediaNotAvailable
