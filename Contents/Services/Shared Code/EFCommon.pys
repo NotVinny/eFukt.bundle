@@ -25,12 +25,16 @@ def GetVideoMetaData(url):
 	# Get the HTML of the site
 	html =		HTML.ElementFromURL(url)
 	
-	# Use xPath to extract and return video metadata
-	return {
-		'title':		html.xpath("//h1[contains(@class, 'title')]/text()")[0].strip(),
-		'videoURL':		html.xpath('//video/source/@src')[0].strip(),
-		'thumbnail':	html.xpath("//video/@poster")[0].strip()
-	}
+	# Check to see if page is a video or a GIF
+	if (len(html.xpath("//div[contains(@class, 'page shifter')][not(contains(@class, 'content-gif'))][not(contains(@class, 'content-picture'))]")) > 0):
+		# Use xPath to extract and return video metadata
+		return {
+			'title':		html.xpath("//h1[contains(@class, 'title')]/text()")[0].strip(),
+			'videoURL':		html.xpath('//video/source/@src')[0].strip(),
+			'thumbnail':	html.xpath("//video/@poster")[0].strip()
+		}
+	else:
+		return None
 
 # Often I would put this into Shared Code\EFCategories.pys, however it's just one short method so it seems like a waste. It'll live here for now
 def GetCategories(url):

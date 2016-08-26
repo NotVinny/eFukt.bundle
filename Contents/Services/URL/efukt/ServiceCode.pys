@@ -7,43 +7,45 @@ def NormalizeURL(url):
 def MetadataObjectForURL(url):
 
 	video = EFCommon.GetVideoMetaData(url)
-
-	return VideoClipObject(
-		title =		video['title'],
-		thumb =		Resource.ContentsOfURLWithFallback(video['thumbnail'], fallback='icon-default.png'),
-		content_rating =	'X'
-	)
+	
+	if (video):
+		return VideoClipObject(
+			title =		video['title'],
+			thumb =		Resource.ContentsOfURLWithFallback(video['thumbnail'], fallback='icon-default.png'),
+			content_rating =	'X'
+		)
+	
+	raise Ex.MediaNotAvailable
 
 @deferred
 def MediaObjectsForURL(url):
 
 	video = EFCommon.GetVideoMetaData(url)
 	
-	Log("VIDEO URL IS: " + video['videoURL'])
-	
-	if (video['videoURL'][-3:] == 'flv'):
-		videoContainer =	'flv'
-		videoCodec =	VideoCodec.VP6
-		audioCodec =	AudioCodec.MP3
-	else:
-		videoContainer =	Container.MP4
-		videoCodec =	VideoCodec.H264
-		audioCodec =	AudioCodec.AAC
-	
-	return [
-		MediaObject(
-			container =			videoContainer,
-			video_codec =			videoCodec,
-			video_resolution =		'480',
-			audio_codec =			audioCodec,
-			audio_channels =			2,
-			optimized_for_streaming =	True if Client.Product not in ['Plex Web'] else False,
-			parts = [
-				PartObject(
-					key =	video['videoURL']
-				)
-			]
-		)
-	]
+	if (video):
+		if (video['videoURL'][-3:] == 'flv'):
+			videoContainer =	'flv'
+			videoCodec =	VideoCodec.VP6
+			audioCodec =	AudioCodec.MP3
+		else:
+			videoContainer =	Container.MP4
+			videoCodec =	VideoCodec.H264
+			audioCodec =	AudioCodec.AAC
+		
+		return [
+			MediaObject(
+				container =			videoContainer,
+				video_codec =			videoCodec,
+				video_resolution =		'480',
+				audio_codec =			audioCodec,
+				audio_channels =			2,
+				optimized_for_streaming =	True if Client.Product not in ['Plex Web'] else False,
+				parts = [
+					PartObject(
+						key =	video['videoURL']
+					)
+				]
+			)
+		]
 	
 	raise Ex.MediaNotAvailable

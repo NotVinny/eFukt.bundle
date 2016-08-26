@@ -57,8 +57,10 @@ def ListVideos(title='List Videos', url=BASE_URL, page=1, pageLimit = MAX_VIDEOS
 		if (video['url'].startswith('/')):
 			video['url'] = BASE_URL + videoURL
 		
-		# Make sure the last step went smoothly (this is probably redundant but oh well), and also make sure it's not an external link
-		if (video['url'].startswith(BASE_URL) and video['category'] != "Gallery" and video['category'] != "Plugs"):
+		# Make sure the last step went smoothly (this is probably redundant but oh well), and also make sure it's not an external link or a gif
+		if (video['url'].startswith(BASE_URL) and
+			video['category'] != "Gallery" and video['category'] != "Plugs" and
+			not video['url'].startswith(BASE_URL + '/view.gif.php')):
 
 			# Create a Video Clip Object for the video
 			oc.add(VideoClipObject(
