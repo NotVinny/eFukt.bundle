@@ -1,0 +1,41 @@
+def GetVideos(url):
+	# Create an empty list to hold the videos
+	videos = []
+	
+	# Get the HTML of the site
+	html = HTML.ElementFromURL(url)
+	
+	# Use xPath to extract a list of divs that contain videos
+	videoElements = html.xpath("//body/div/div/div/div/div[contains(@class, 'tile')]")
+	
+	# Loop through the videos in the page
+	for videoElement in videoElements:
+		
+		# Use xPath to extract video details
+		videos.append({
+			'title':		videoElement.xpath("./div[contains(@class, 'meta')]/h3[contains(@class,'title')]/a/text()")[0],
+			'url':			videoElement.xpath("./div[contains(@class, 'meta')]/h3[contains(@class,'title')]/a/@href")[0],
+			'thumbnail':	videoElement.xpath("./a[contains(@class, 'thumb')]/img/@src")[0],
+			'category':		videoElement.xpath("./div[contains(@class, 'meta')]/div[contains(@class, 'details')]/span[4]/a/text()")[0]
+		})
+	
+	return videos
+
+def GetVideoMetaData(url):
+	# Get the HTML of the site
+	html =		HTML.ElementFromURL(url)
+	
+	# Use xPath to extract and return video metadata
+	return {
+		'title':		html.xpath("//h1[contains(@class, 'title')]/text()")[0].strip(),
+		'videoURL':		html.xpath('//video/source/@src')[0].strip(),
+		'thumbnail':	html.xpath("//video/@poster")[0].strip()
+	}
+
+# Often I would put this into Shared Code\EFCategories.pys, however it's just one short method so it seems like a waste. It'll live here for now
+def GetCategories(url):
+	# Get the HTML of the page
+	html = HTML.ElementFromURL(url)
+	
+	# Use xPath to retrieve and return the list of catgegories
+	return html.xpath("//select[@name = 'cat']/option/text()")

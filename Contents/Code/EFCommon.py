@@ -47,36 +47,25 @@ def ListVideos(title='List Videos', url=BASE_URL, page=1, pageLimit = MAX_VIDEOS
 	# Add the page number into the URL
 	pagedURL = url if page == 1 else url + str(page) + '/'
 	
-	# Get the HTML of the site
-	html = HTML.ElementFromURL(pagedURL)
-	
-	# Use xPath to extract a list of divs that contain videos
-	videos = html.xpath("//body/div/div/div/div/div[contains(@class, 'tile')]")
+	# Get videos
+	videos = SharedCodeService.EFCommon.GetVideos(pagedURL)
 	
 	# Loop through the videos in the page
 	for video in videos:
 		
-		# Get the link of the video
-		videoURL = video.xpath("./div[contains(@class, 'meta')]/h3[contains(@class,'title')]/a/@href")[0]
-		
 		# Check for relative URLs
-		if (videoURL.startswith('/')):
-			videoURL = BASE_URL + videoURL
+		if (video['url'].startswith('/')):
+			video['url'] = BASE_URL + videoURL
 		
-		# Make sure the last step went smoothly (this is probably redundant but oh well)
-		if (videoURL.startswith(BASE_URL)):
-			# Use xPath to extract video details
-			videoTitle =	video.xpath("./div[contains(@class, 'meta')]/h3[contains(@class,'title')]/a/text()")[0]
-			thumbnail =	video.xpath("./a[contains(@class, 'thumb')]/img/@src")[0]
-			category =		video.xpath("./div[contains(@class, 'meta')]/div[contains(@class, 'details')]/span[4]/a/text()")[0]
-			
-			if (category != "Gallery" and category != "Plugs"):
-				# Create a Video Clip Object for the video
-				oc.add(VideoClipObject(
-					url =		videoURL,
-					title =	videoTitle,
-					thumb =	thumbnail
-				))
+		# Make sure the last step went smoothly (this is probably redundant but oh well), and also make sure it's not an external link
+		if (video['url'].startswith(BASE_URL) and video['category'] != "Gallery" and video['category'] != "Plugs"):
+
+			# Create a Video Clip Object for the video
+			oc.add(VideoClipObject(
+				url =	video['url'],
+				title =	video['title'],
+				thumb =	video['thumbnail']
+			))
 	
 	# There is a slight change that this will break... If the number of videos returned in total is divisible by MAX_VIDEOS_PER_PAGE with no remainder, there could possibly be no additional page after. This is unlikely though and I'm too lazy to handle it.
 	if (len(videos) == int(pageLimit)):
