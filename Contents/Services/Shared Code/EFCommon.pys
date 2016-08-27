@@ -15,6 +15,7 @@ def GetVideos(url):
 		videos.append({
 			'title':		videoElement.xpath("./div[contains(@class, 'meta')]/h3[contains(@class,'title')]/a/text()")[0],
 			'url':			videoElement.xpath("./div[contains(@class, 'meta')]/h3[contains(@class,'title')]/a/@href")[0],
+			'summary':		videoElement.xpath("./div[contains(@class, 'meta')]/p[contains(@class, 'desc')]")[0].text_content(),
 			'thumbnail':	videoElement.xpath("./a[contains(@class, 'thumb')]/img/@src")[0],
 			'category':		videoElement.xpath("./div[contains(@class, 'meta')]/div[contains(@class, 'details')]/span[4]/a/text()")[0]
 		})
@@ -31,7 +32,10 @@ def GetVideoMetaData(url):
 		return {
 			'title':		html.xpath("//h1[contains(@class, 'title')]/text()")[0].strip(),
 			'videoURL':		html.xpath('//video/source/@src')[0].strip(),
-			'thumbnail':	html.xpath("//video/@poster")[0].strip()
+			'summary':		html.xpath("//div[contains(@class, 'videobox')]/h2[@class = 'desc']")[0].text_content(),
+			'thumbnail':	html.xpath("//video/@poster")[0].strip(),
+			'category':		html.xpath("//div[contains(@class, 'videobox')]/div[contains(@class, 'meta')]/span[@title='Category']/a/text()")[0].strip(),
+			'tags':			html.xpath("//div[contains(@class, 'videobox')]/div[contains(@class, 'meta')]/h3[@title='Tags']/a/text()")
 		}
 	else:
 		return None

@@ -64,9 +64,10 @@ def ListVideos(title='List Videos', url=BASE_URL, page=1, pageLimit = MAX_VIDEOS
 
 			# Create a Video Clip Object for the video
 			oc.add(VideoClipObject(
-				url =	video['url'],
-				title =	video['title'],
-				thumb =	video['thumbnail']
+				url =		video['url'],
+				title =		video['title'],
+				thumb =		video['thumbnail'],
+				summary =	video['summary']
 			))
 	
 	# There is a slight change that this will break... If the number of videos returned in total is divisible by MAX_VIDEOS_PER_PAGE with no remainder, there could possibly be no additional page after. This is unlikely though and I'm too lazy to handle it.
