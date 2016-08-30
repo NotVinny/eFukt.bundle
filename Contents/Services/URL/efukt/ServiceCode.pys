@@ -1,51 +1,52 @@
+import EFCommon
+
 def NormalizeURL(url):
 
 	return url
 
 def MetadataObjectForURL(url):
 
-	html =		HTML.ElementFromURL(url)
-
-	title =		html.xpath("//h1[contains(@class, 'title')]/text()")[0].strip()
-	thumbnail =	html.xpath("//video/@poster")[0].strip()
-
-	return VideoClipObject(
-		title =		title,
-		thumb =		Resource.ContentsOfURLWithFallback([thumbnail], fallback='icon-default.png'),
-		content_rating =	'X',
-	)
+	video = EFCommon.GetVideoMetaData(url)
+	
+	if (video):
+		return VideoClipObject(
+			title =		video['title'],
+			thumb =		Resource.ContentsOfURLWithFallback(video['thumbnail'], fallback='icon-default.png'),
+			summary =	video['summary'],
+			content_rating =	'X'
+		)
+	
+	raise Ex.MediaNotAvailable
 
 @deferred
 def MediaObjectsForURL(url):
 
-	html =		HTML.ElementFromURL(url)
-	videoURL =		html.xpath('//video/source/@src')[0].strip()
+	video = EFCommon.GetVideoMetaData(url)
 	
-	Log("VIDEO URL IS: " + videoURL)
-	
-	if (videoURL[-3:] == 'flv'):
-		videoContainer =	'flv'
-		videoCodec =	VideoCodec.VP6
-		audioCodec =	AudioCodec.MP3
-	else:
-		videoContainer =	Container.MP4
-		videoCodec =	VideoCodec.H264
-		audioCodec =	AudioCodec.AAC
-	
-	return [
-		MediaObject(
-			container =			videoContainer,
-			video_codec =			videoCodec,
-			video_resolution =		'480',
-			audio_codec =			audioCodec,
-			audio_channels =			2,
-			optimized_for_streaming =	True if Client.Product not in ['Plex Web'] else False,
-			parts = [
-				PartObject(
-					key =	videoURL
-				)
-			]
-		)
-	]
+	if (video):
+		if (video['videoURL'][-3:] == 'flv'):
+			videoContainer =	'flv'
+			videoCodec =	VideoCodec.VP6
+			audioCodec =	AudioCodec.MP3
+		else:
+			videoContainer =	Container.MP4
+			videoCodec =	VideoCodec.H264
+			audioCodec =	AudioCodec.AAC
+		
+		return [
+			MediaObject(
+				container =			videoContainer,
+				video_codec =			videoCodec,
+				video_resolution =		'480',
+				audio_codec =			audioCodec,
+				audio_channels =			2,
+				optimized_for_streaming =	True if Client.Product not in ['Plex Web'] else False,
+				parts = [
+					PartObject(
+						key =	video['videoURL']
+					)
+				]
+			)
+		]
 	
 	raise Ex.MediaNotAvailable

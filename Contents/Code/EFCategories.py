@@ -9,19 +9,16 @@ def BrowseCategories(title='Browse Categories', url = EF_CATEGORIES_LIST_URL):
 	# Create a dictionary of menu items
 	browseCategoriesMenuItems = OrderedDict()
 	
-	# Get the HTML of the page
-	html = HTML.ElementFromURL(url)
-	
-	# Use xPath to extract a list of catgegories
-	categories = html.xpath("//select[@name = 'cat']/option/text()")
+	# Get catgegories
+	categories = SharedCodeService.EFCommon.GetCategories(url)
 	
 	# Loop through all categories
 	for category in categories:
 		
-		# Use xPath to extract category details
-		categoryURL =		EF_CATEGORY_URL % category
-		
 		# Add a menu item for the category
-		browseCategoriesMenuItems[category] = {'function':ListVideos, 'functionArgs':{'url':categoryURL}}
+		browseCategoriesMenuItems[category] = {
+			'function':		ListVideos,
+			'functionArgs':	{'url':EF_CATEGORY_URL % category}
+		}
 	
 	return GenerateMenu(title, browseCategoriesMenuItems)
