@@ -27,8 +27,10 @@ def BrowseVideos(title='Browse Videos'):
 	# Add the sorting options
 	for sortTitle, sortURL in SORT_ORDERS.items():
 		
+		pageLimit = MAX_VIDEOS_PER_PAGE if sortTitle != 'Most Recent' else MAX_VIDEOS_PER_PAGE + 1
+
 		# Add a menu item for the category
-		browseVideosMenuItems[sortTitle] = {'function':ListVideos, 'functionArgs':{'url':sortURL}}
+		browseVideosMenuItems[sortTitle] = {'function':ListVideos, 'functionArgs':{'url':sortURL, 'pageLimit':pageLimit}}
 	
 	# Generate the menu with the sort orders
 	oc = GenerateMenu(title, browseVideosMenuItems, no_cache=True)
