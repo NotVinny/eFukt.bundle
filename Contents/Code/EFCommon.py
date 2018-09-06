@@ -3,7 +3,7 @@ from collections import OrderedDict
 
 ROUTE_PREFIX =			'/video/efukt'
 
-BASE_URL =			'http://efukt.com'
+BASE_URL =			'https://efukt.com'
 EF_VIDEO_SEARCH_URL =	BASE_URL + '/search/%s/'
 EF_RANDOM_VIDEO_URL =	BASE_URL + '/random.php'
 
