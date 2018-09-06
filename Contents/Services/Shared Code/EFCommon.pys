@@ -17,7 +17,8 @@ def GetVideos(url):
 			'url':			videoElement.xpath("./div[contains(@class, 'meta')]/h3[contains(@class,'title')]/a/@href")[0],
 			'summary':		videoElement.xpath("./div[contains(@class, 'meta')]/p[contains(@class, 'desc')]")[0].text_content(),
 			'thumbnail':	videoElement.xpath("./a[contains(@class, 'thumb')]/img/@src")[0],
-			'category':		videoElement.xpath("./div[contains(@class, 'meta')]/div[contains(@class, 'details')]/span[4]/a/text()")[0]
+			'category':		videoElement.xpath("./div[contains(@class, 'meta')]/div[contains(@class, 'details')]/span[4]/a/text()")[0],
+			'external':		True if len(videoElement.xpath("./div[contains(@class, 'meta')]/div[contains(@class, 'details')]/span/i[contains(@class, 'fa-external-link')]")) > 0 else False
 		})
 	
 	return videos

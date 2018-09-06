@@ -63,6 +63,7 @@ def ListVideos(title='List Videos', url=BASE_URL, page=1, pageLimit = MAX_VIDEOS
 		
 		# Make sure the last step went smoothly (this is probably redundant but oh well), and also make sure it's not an external link or a gif
 		if (video['url'].startswith(BASE_URL) and
+			not video['external'] and
 			not video['category'] in categoriesToIgnore and
 			not video['url'].startswith(BASE_URL + '/view.gif.php')):
 
